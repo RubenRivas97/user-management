@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 class UserController extends Controller
 {
     /**
@@ -24,7 +25,7 @@ class UserController extends Controller
             $query->where('email', 'like', '%' . $request->email . '%');
         }
 
-        return $query->paginate(10);
+        return UserResource::collection($query->paginate(10));
     }
     /**
      * Store a newly created resource in storage.
@@ -43,7 +44,13 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        return User::findOrFail($id);
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        return response()->json($user);
     }
 
     /**
@@ -51,7 +58,12 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+
+         if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
         $data = $request->validated();
 
         if (isset($data['password'])) {
@@ -68,7 +80,12 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+
+         if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
         $user->delete();
 
         return response()->json(['message' => 'User deleted']);
