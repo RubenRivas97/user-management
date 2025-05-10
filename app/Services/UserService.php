@@ -26,16 +26,7 @@ class UserService implements UserServiceInterface
 
     public function list(array $filters): LengthAwarePaginator
     {
-        $query = User::query();
-
-        if (!empty($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
-        }
-
-        if (!empty($filters['email'])) {
-            $query->where('email', 'like', '%' . $filters['email'] . '%');
-        }
-
+        $query = User::query()->filter($filters);
         return $query->paginate(10);
     }
 
