@@ -36,7 +36,7 @@ class UserController extends Controller
         $data['password'] = Hash::make($data['password']);
         $user = User::create($data);
 
-        return response()->json($user, 201);
+        return new UserResource($user);
     }
 
     /**
@@ -50,7 +50,7 @@ class UserController extends Controller
             return response()->json(['message' => 'User not found.'], 404);
         }
 
-        return response()->json($user);
+        return new UserResource($user);
     }
 
     /**
@@ -72,7 +72,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return response()->json($user);
+        return new UserResource($user);
     }
 
     /**
@@ -88,6 +88,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response()->json(['message' => 'User deleted']);
+        return response()->json(['message' => 'User deleted successfully.']);
     }
 }
