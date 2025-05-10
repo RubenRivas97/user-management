@@ -8,8 +8,17 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Services\UserServiceInterface;
 class UserController extends Controller
 {
+
+    protected UserServiceInterface $userService;
+
+    public function __construct(UserServiceInterface $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -32,10 +41,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $data = $request->validated();
-        $data['password'] = Hash::make($data['password']);
-        $user = User::create($data);
-
+        $user = $this->userService->create($request->validated());
         return new UserResource($user);
     }
 
@@ -60,19 +66,12 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-         if (!$user) {
+        if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
 
-        $data = $request->validated();
-
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
-
-        $user->update($data);
-
-        return new UserResource($user);
+        $updated = $this->userService->update($user, $request->validated());
+        return new UserResource($updated);
     }
 
     /**
