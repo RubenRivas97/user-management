@@ -85,7 +85,7 @@ php artisan serve
 
 ---
 
-# 📘 Example Users Table
+# Example Users Table
 
 | Field        | Type     | Description              |
 |--------------|----------|--------------------------|
