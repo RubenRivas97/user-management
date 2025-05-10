@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 class UserController extends Controller
 {
     /**
@@ -39,10 +40,10 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $request, string $id)
     {
         $user = User::findOrFail($id);
-        $data = $request->all();
+        $data = $request->validated();
 
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
