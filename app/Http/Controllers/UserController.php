@@ -24,17 +24,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::query();
-
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->email . '%');
-        }
-
-        return UserResource::collection($query->paginate(10));
+        $users = $this->userService->list($request->only(['name', 'email']));
+        return UserResource::collection($users);
     }
     /**
      * Store a newly created resource in storage.
@@ -50,7 +41,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::find($id);
+        $user = $this->userService->find((int) $id);
 
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
@@ -79,13 +70,11 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::find($id);
+        $deleted = $this->userService->delete((int) $id);
 
-         if (!$user) {
+        if (!$deleted) {
             return response()->json(['message' => 'User not found.'], 404);
         }
-
-        $user->delete();
 
         return response()->json(['message' => 'User deleted successfully.']);
     }
