@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use App\Http\Requests\StoreUserRequest;
 class UserController extends Controller
 {
     /**
@@ -19,9 +19,9 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $data = $request->all();
+        $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
         $user = User::create($data);
 
